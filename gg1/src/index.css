@@ -1,0 +1,33 @@
+@import "tailwindcss";
+
+@media (min-width: 768px) {
+  .site-header-main {
+    display: grid !important;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    gap: 10px clamp(16px, 2vw, 32px) !important;
+  }
+
+  .site-header-brand {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .site-header-nav {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex !important;
+    min-width: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+    column-gap: clamp(8px, 0.9vw, 14px) !important;
+    row-gap: 8px !important;
+    font-size: 12px !important;
+    line-height: 1.25;
+  }
+
+  .site-header-nav > a,
+  .site-header-nav > p {
+    white-space: nowrap;
+  }
+}
