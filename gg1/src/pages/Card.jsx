@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import { SiteFooter } from "./Home";
 import logo from "../assets/logo1 1.png";
 import { useCartFavorites } from "../context/CartFavoritesContext";
+import orderVideo from "../assets/gemini_generated_video_48c807ca.mp4";
 
 const IconHeart = () => (
   <svg width="22" height="22" fill="none" stroke="#333" strokeWidth="1.8" viewBox="0 0 24 24">
@@ -23,6 +24,7 @@ const IconCart = () => (
 );
 
 export default function Cart() {
+  const [showVideo, setShowVideo] = useState(false);
   const {
     cart,
     cartCount: count,
@@ -486,9 +488,63 @@ export default function Cart() {
                 <span>{total.toLocaleString("ru-RU")} ₽</span>
               </div>
 
-              <button type="button" className="cart-order-button">
+              <button type="button" className="cart-order-button" onClick={() => setShowVideo(true)}>
                 ОФОРМИТЬ ЗАКАЗ
               </button>
+
+              {showVideo && (
+                <div
+                  style={{
+                    position: "fixed",
+                    top: 0, left: 0, right: 0, bottom: 0,
+                    background: "rgba(0,0,0,0.75)",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    zIndex: 9999,
+                  }}
+                  onClick={() => setShowVideo(false)}
+                >
+                  <div
+                    style={{ position: "relative" }}
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <button
+                      onClick={() => setShowVideo(false)}
+                      style={{
+                        position: "absolute",
+                        top: "-14px",
+                        right: "-14px",
+                        background: "#fff",
+                        border: "none",
+                        borderRadius: "50%",
+                        width: "28px",
+                        height: "28px",
+                        fontSize: "16px",
+                        cursor: "pointer",
+                        lineHeight: "28px",
+                        textAlign: "center",
+                        fontWeight: "bold",
+                        zIndex: 1,
+                      }}
+                    >
+                      ×
+                    </button>
+                    <video
+                      src={orderVideo}
+                      autoPlay
+                      controls
+                      style={{
+                        maxWidth: "480px",
+                        maxHeight: "320px",
+                        borderRadius: "12px",
+                        display: "block",
+                        boxShadow: "0 8px 40px rgba(0,0,0,0.5)",
+                      }}
+                    />
+                  </div>
+                </div>
+              )}
 
               <Link to="/" className="cart-continue">
                 Продолжить покупки
