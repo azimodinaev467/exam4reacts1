@@ -17,6 +17,7 @@ import Taksikridit from "./pages/Taksikridit";
 import Okomponi from "./pages/Okomponi";
 import Taxcentr from "./pages/Taxcentr";
 import Otziv from "./pages/otziv";
+import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
@@ -38,6 +39,7 @@ export default function App() {
       <Route path="/about-company" element={<Okomponi />} />
       <Route path="/tech-center" element={<Taxcentr />} />
       <Route path="/reviews" element={<Otziv />} />
+      <Route path="*" element={<NotFound />} />
     </Routes>
   );
 }
