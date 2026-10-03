@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { SiteFooter } from "./Home";
 import logo from "../assets/logo1 1.png";
+import { useCartFavorites } from "../context/CartFavoritesContext";
 
 const IconHeart = () => (
   <svg width="22" height="22" fill="none" stroke="#333" strokeWidth="1.8" viewBox="0 0 24 24">
@@ -22,49 +23,14 @@ const IconCart = () => (
 );
 
 export default function Cart() {
-  const [cart, setCart] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("cart") || "[]");
-    } catch {
-      return [];
-    }
-  });
-
-  const [favorites] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("favorites") || "[]");
-    } catch {
-      return [];
-    }
-  });
-
-  const changeQuantity = (id, quantity) => {
-    setCart((current) => {
-      const updated = current
-        .map((item) =>
-          item.id === id ? { ...item, quantity } : item
-        )
-        .filter((item) => item.quantity > 0);
-
-      localStorage.setItem("cart", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const removeItem = (id) => {
-    setCart((current) => {
-      const updated = current.filter((item) => item.id !== id);
-      localStorage.setItem("cart", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const total = cart.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-
-  const count = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const {
+    cart,
+    cartCount: count,
+    cartTotal: total,
+    changeQuantity,
+    removeFromCart: removeItem,
+    favorites,
+  } = useCartFavorites();
 
   return (
     <div style={{ fontFamily: "Arial, sans-serif", color: "#222", background: "#fff" }}>

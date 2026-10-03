@@ -1,4 +1,5 @@
 import React, { useRef, useState } from "react";
+import { useCartFavorites } from "../context/CartFavoritesContext";
 import { Link } from "react-router-dom";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
@@ -458,7 +459,8 @@ function CarCard({ carImg, compact = false, car, onAddToCart, onToggleFavorite, 
     </div>
   );
 }
-function MobileCarSwiper({ onAddToCart, onToggleFavorite, favorites }) {
+function MobileCarSwiper() {
+  const { addToCart, toggleFavorite, isFavorite } = useCartFavorites();
   return (
     <div style={{ padding: "0 16px 40px" }}>
       <h2
@@ -489,9 +491,9 @@ function MobileCarSwiper({ onAddToCart, onToggleFavorite, favorites }) {
                 price: 1615000,
                 image: img,
               }}
-              onAddToCart={onAddToCart}
-              onToggleFavorite={onToggleFavorite}
-              isFavorite={favorites.some((item) => item.id === `skoda-octavia-${i}`)}
+              onAddToCart={addToCart}
+              onToggleFavorite={toggleFavorite}
+              isFavorite={isFavorite(`skoda-octavia-${i}`)}
             />
           </SwiperSlide>
         ))}
@@ -1236,63 +1238,14 @@ function SiteFooter({ showMap = true }) {
 }
 
 export default function Home() {
-  const [favorites, setFavorites] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("favorites") || "[]");
-    } catch {
-      return [];
-    }
-  });
-
-  const [cart, setCart] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("cart") || "[]");
-    } catch {
-      return [];
-    }
-  });
-
-  const toggleFavorite = (car) => {
-    setFavorites((current) => {
-      const exists = current.some((item) => item.id === car.id);
-      const updated = exists ? current.filter((item) => item.id !== car.id) : [...current, car];
-      localStorage.setItem("favorites", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const addToCart = (car) => {
-    setCart((current) => {
-      const exists = current.find((item) => item.id === car.id);
-      const updated = exists
-        ? current.map((item) =>
-            item.id === car.id ? { ...item, quantity: item.quantity + 1 } : item
-          )
-        : [...current, { ...car, quantity: 1 }];
-      localStorage.setItem("cart", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const changeCartQuantity = (id, quantity) => {
-    setCart((current) => {
-      const updated = current
-        .map((item) => (item.id === id ? { ...item, quantity } : item))
-        .filter((item) => item.quantity > 0);
-      localStorage.setItem("cart", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const removeFromCart = (id) => {
-    setCart((current) => {
-      const updated = current.filter((item) => item.id !== id);
-      localStorage.setItem("cart", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
+  const {
+    cart,
+    cartCount,
+    favorites,
+    addToCart,
+    toggleFavorite,
+    isFavorite,
+  } = useCartFavorites();
   const [minPrice, setMinPrice] = useState(0);
   const [maxPrice, setMaxPrice] = useState(500);
 
@@ -2407,7 +2360,7 @@ export default function Home() {
                   car={car}
                   onAddToCart={addToCart}
                   onToggleFavorite={toggleFavorite}
-                  isFavorite={favorites.some((item) => item.id === car.id)}
+                  isFavorite={isFavorite(car.id)}
                 />
               );
             })}
@@ -2725,11 +2678,7 @@ export default function Home() {
             </div>
           </div>
 
-          <MobileCarSwiper
-            onAddToCart={addToCart}
-            onToggleFavorite={toggleFavorite}
-            favorites={favorites}
-          />
+          <MobileCarSwiper />
         </div>
       </div>
 

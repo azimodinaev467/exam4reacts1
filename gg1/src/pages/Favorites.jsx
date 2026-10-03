@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { Link } from "react-router-dom";
 import { CarCard, SiteFooter } from "./Home";
 import logo from "../assets/logo1 1.png";
+import { useCartFavorites } from "../context/CartFavoritesContext";
 
 const IconHeart = () => (
   <svg width="22" height="22" fill="#d30000" stroke="#d30000" strokeWidth="1.8" viewBox="0 0 24 24">
@@ -26,44 +27,12 @@ const IconCart = () => (
 );
 
 export default function Favorites() {
-  const [favorites, setFavorites] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("favorites") || "[]");
-    } catch {
-      return [];
-    }
-  });
-
-  const [cart, setCart] = useState(() => {
-    try {
-      return JSON.parse(localStorage.getItem("cart") || "[]");
-    } catch {
-      return [];
-    }
-  });
-
-  const removeFavorite = (id) => {
-    setFavorites((current) => {
-      const updated = current.filter((item) => item.id !== id);
-      localStorage.setItem("favorites", JSON.stringify(updated));
-      return updated;
-    });
-  };
-
-  const addToCart = (car) => {
-    setCart((current) => {
-      const exists = current.find((item) => item.id === car.id);
-
-      const updated = exists
-        ? current.map((item) =>
-            item.id === car.id ? { ...item, quantity: item.quantity + 1 } : item
-          )
-        : [...current, { ...car, quantity: 1 }];
-
-      localStorage.setItem("cart", JSON.stringify(updated));
-      return updated;
-    });
-  };
+  const {
+    favorites,
+    removeFromFavorites: removeFavorite,
+    addToCart,
+    cart,
+  } = useCartFavorites();
 
   const cartCount = cart.reduce((sum, item) => sum + item.quantity, 0);
 
